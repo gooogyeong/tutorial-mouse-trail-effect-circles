@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="cursor" id="main">
+            move your <br /> cursor
+        </div>
+    </div>
+
+    <script>
+        let cursorPosition = {
+            x: 0,
+            y: 0
+        };
+        let isCursorMoving = false;
+        let cursorMoveTimeout;
+        let circles = [];
+        let circleRemovalInterval;
+
+        const cursor = document.getElementById('main');
+
+        document.addEventListener('mousemove', (e) => {
+          cursorPosition.x = e.clientX;
+          cursorPosition.y = e.clientY;  
+          cursor.style.left = e.clientX - cursor.offsetWidth / 2 + "px";
+          cursor.style.top = e.clientY - cursor.offsetHeight / 2 + "px";
+
+          isCursorMoving = true;
+        })
+
+        setInterval(() => {
+            if (isCursorMoving) {
+                const circle = document.createElement('div');
+                circle.classList.add('circle');
+                document.body.appendChild(circle)
+
+                circle.style.left = cursorPosition.x - circle.offsetWidth / 2 + "px";
+                circle.style.top = cursorPosition.y - circle.offsetHeight / 2 + "px";
+                
+                circles.push(circle)
+            }
+        }, 20)
+
+        cursorMoveTimeout = setTimeout(() => {
+            // set isCursorMoving to false if mouse movement is not detected for 100ms
+            isCursorMoving = false;
+            
+            setTimeout(() => {
+                clearInterval(circleRemovalInterval);
+
+                circleRemovalInterval = setInterval(() => {
+                    if (circles.length) {
+                        let circle = circles.shift();
+                        circle.remove();
+                    } else {
+                        clearInterval(circleRemovalInterval)           
+                    }
+                }, 25)
+            }, 100);
+
+        }, 100);
+    </script>
+</body>
+</html>
